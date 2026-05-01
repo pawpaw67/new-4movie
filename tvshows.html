@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TV Shows — 4 Watch</title>
+    <meta name="description" content="Browse all TV Shows on 4 Watch." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background: #0b0f1a;
+        color: #e4e4e7;
+        font-family: "Inter", "Segoe UI", sans-serif;
+        margin: 0;
+      }
+      .navbar {
+        background: rgba(11, 15, 26, 0.85);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 0.75rem 1.5rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      .navbar-brand {
+        color: #00ffc3 !important;
+        font-weight: 800;
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+      }
+      .nav-link {
+        color: #a1a1aa !important;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: color 0.25s;
+        position: relative;
+      }
+      .nav-link:hover,
+      .nav-link.active {
+        color: #fff !important;
+      }
+      .nav-link.active::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 18px;
+        height: 2px;
+        background: #00ffc3;
+        border-radius: 2px;
+      }
+      .nav-search {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 6px 12px;
+        color: #fff;
+        font-size: 0.85rem;
+        width: 200px;
+        transition:
+          border-color 0.3s,
+          width 0.3s;
+      }
+      .nav-search::placeholder {
+        color: #71717a;
+      }
+      .nav-search:focus {
+        outline: none;
+        border-color: #00ffc3;
+        width: 240px;
+      }
+      .nav-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00ffc3, #00b894);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: #0b0f1a;
+        cursor: pointer;
+      }
+
+      .page-header {
+        padding: 48px 0 24px;
+        text-align: center;
+      }
+      .page-header h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .page-header p {
+        color: #71717a;
+        font-size: 0.92rem;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .filter-bar {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 36px;
+      }
+      .filter-btn {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #a1a1aa;
+        padding: 7px 20px;
+        border-radius: 20px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.25s;
+      }
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: #00ffc3;
+        color: #0b0f1a;
+        border-color: #00ffc3;
+        font-weight: 600;
+      }
+
+      .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 22px;
+      }
+      .movie-card {
+        background: #111827;
+        border-radius: 12px;
+        overflow: hidden;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+        cursor: pointer;
+        position: relative;
+      }
+      .movie-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      }
+      .movie-card img {
+        width: 100%;
+        height: 270px;
+        object-fit: cover;
+        display: block;
+      }
+      .card-rating {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        color: #facc15;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          to top,
+          rgba(17, 24, 39, 0.95) 0%,
+          transparent 50%
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .movie-card:hover .card-overlay {
+        opacity: 1;
+      }
+      .overlay-play {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #00ffc3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0b0f1a;
+        font-size: 1rem;
+        box-shadow: 0 0 18px rgba(0, 255, 195, 0.3);
+        margin-bottom: 40px;
+      }
+      .movie-info {
+        padding: 12px 14px;
+      }
+      .movie-title {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 3px;
+      }
+      .movie-meta {
+        font-size: 0.72rem;
+        color: #71717a;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 60px 0;
+        color: #52525b;
+        font-size: 1rem;
+      }
+      .no-results i {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+        display: block;
+        color: #333;
+      }
+
+      footer {
+        background: #0d1117;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 32px 0 18px;
+        margin-top: 60px;
+      }
+      .footer-brand {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #00ffc3;
+        letter-spacing: 2px;
+      }
+      .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding-top: 16px;
+        margin-top: 20px;
+        text-align: center;
+        color: #52525b;
+        font-size: 0.78rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">4 Watch</a>
+        <button
+          class="navbar-toggler border-0"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#mainNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav mx-auto gap-3">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="movies.html">Movies</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="tvshows.html">TV Shows</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="kdrama.html">K-Drama</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="genres.html">Genres</a>
+            </li>
+          </ul>
+          <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+            <form id="searchForm" class="d-flex m-0">
+              <input
+                id="searchInput"
+                type="text"
+                class="nav-search d-none d-lg-block"
+                placeholder="Search shows..."
+              />
+            </form>
+            <div class="nav-avatar">U</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="page-header">
+        <h1 id="pageTitle">📺 TV Shows</h1>
+        <p id="pageDesc">
+          Explore our full collection of TV Shows — from binge-worthy series to
+          trending episodes.
+        </p>
+      </div>
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-genre="all">All</button>
+        <button class="filter-btn" data-genre="action">Action</button>
+        <button class="filter-btn" data-genre="comedy">Comedy</button>
+        <button class="filter-btn" data-genre="drama">Drama</button>
+        <button class="filter-btn" data-genre="horror">Horror</button>
+        <button class="filter-btn" data-genre="sci-fi">Sci-Fi</button>
+        <button class="filter-btn" data-genre="thriller">Thriller</button>
+        <button class="filter-btn" data-genre="fantasy">Fantasy</button>
+        <button class="filter-btn" data-genre="crime">Crime</button>
+      </div>
+
+      <div class="movie-grid" id="movieGrid"></div>
+      <div class="no-results" id="noResults" style="display: none">
+        <i class="fas fa-tv"></i>
+        No TV shows found for this genre.
+      </div>
+    </div>
+
+    <footer>
+      <div class="container text-center">
+        <div class="footer-brand">4 Watch</div>
+        <div class="footer-bottom">© 2026 4 Watch. All rights reserved.</div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const shows = [
+        {
+          title: "Breaking Bad",
+          year: "2008",
+          genre: "crime",
+          rating: "9.5",
+          img: "assets/images/breaking-bad.jpg",
+        },
+        {
+          title: "Stranger Things",
+          year: "2016",
+          genre: "horror",
+          rating: "8.7",
+          img: "assets/images/strangerthings.webp",
+        },
+        {
+          title: "Peaky Blinders",
+          year: "2013",
+          genre: "drama",
+          rating: "8.8",
+          img: "assets/images/peakyblinders.webp",
+        },
+        {
+          title: "The Witcher",
+          year: "2019",
+          genre: "fantasy",
+          rating: "8.2",
+          img: "assets/images/thewitcher.jpg",
+        },
+        {
+          title: "Narcos",
+          year: "2015",
+          genre: "crime",
+          rating: "8.8",
+          img: "assets/images/narcos.jpg",
+        },
+        {
+          title: "Lucifer",
+          year: "2016",
+          genre: "fantasy",
+          rating: "8.1",
+          img: "assets/images/lucifer.jpg",
+        },
+        {
+          title: "You",
+          year: "2018",
+          genre: "thriller",
+          rating: "7.7",
+          img: "assets/images/you.jpg",
+        },
+        {
+          title: "Jessica Jones",
+          year: "2015",
+          genre: "action",
+          rating: "7.9",
+          img: "assets/images/jessicajones.jpg",
+        },
+        {
+          title: "The Crown",
+          year: "2016",
+          genre: "drama",
+          rating: "8.7",
+          img: "assets/images/thecrown.jpg",
+        },
+        {
+          title: "Squid Game",
+          year: "2021",
+          genre: "thriller",
+          rating: "8.0",
+          img: "assets/images/squidgame.jpg",
+        },
+        {
+          title: "Money Heist",
+          year: "2017",
+          genre: "crime",
+          rating: "8.3",
+          img: "assets/images/moneyheist.jpg",
+        },
+        {
+          title: "Daredevil",
+          year: "2015",
+          genre: "action",
+          rating: "8.6",
+          img: "assets/images/daredevil.webp",
+        },
+        {
+          title: "Comic 8",
+          year: "2014",
+          genre: "comedy",
+          rating: "8.0",
+          img: "assets/images/comic8.jpg",
+        },
+      ];
+
+      const grid = document.getElementById("movieGrid");
+      const noResults = document.getElementById("noResults");
+      const pageTitle = document.getElementById("pageTitle");
+      const pageDesc = document.getElementById("pageDesc");
+
+      function renderShows(genre) {
+        const filtered =
+          genre === "all" ? shows : shows.filter((m) => m.genre === genre);
+        grid.innerHTML = "";
+        if (filtered.length === 0) {
+          noResults.style.display = "block";
+          return;
+        }
+        noResults.style.display = "none";
+        filtered.forEach((m) => {
+          grid.innerHTML += `
+            <div class="movie-card" onclick="alert('${m.title} selected!')">
+              <img src="${m.img}" alt="${m.title}"/>
+              <span class="card-rating"><i class="fas fa-star"></i> ${m.rating}</span>
+              <div class="card-overlay"><div class="overlay-play"><i class="fas fa-play"></i></div></div>
+              <div class="movie-info">
+                <div class="movie-title">${m.title}</div>
+                <div class="movie-meta"><span>${m.year}</span><span>•</span><span>${m.genre.charAt(0).toUpperCase() + m.genre.slice(1)}</span></div>
+              </div>
+            </div>`;
+        });
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const urlGenre = params.get("genre");
+      let activeGenre = "all";
+
+      if (urlGenre) {
+        activeGenre = urlGenre.toLowerCase();
+        const label =
+          activeGenre.charAt(0).toUpperCase() + activeGenre.slice(1);
+        pageTitle.textContent = "📺 " + label + " TV Shows";
+        pageDesc.textContent =
+          "Showing all TV shows in the " + label + " genre.";
+      }
+
+      document.querySelectorAll(".filter-btn").forEach((btn) => {
+        btn.classList.remove("active");
+        if (btn.dataset.genre === activeGenre) btn.classList.add("active");
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".filter-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          const g = btn.dataset.genre;
+          renderShows(g);
+          if (g === "all") {
+            pageTitle.textContent = "📺 TV Shows";
+            pageDesc.textContent =
+              "Explore our full collection of TV Shows — from binge-worthy series to trending episodes.";
+          } else {
+            const l = g.charAt(0).toUpperCase() + g.slice(1);
+            pageTitle.textContent = "📺 " + l + " TV Shows";
+            pageDesc.textContent =
+              "Showing all TV shows in the " + l + " genre.";
+          }
+        });
+      });
+
+      renderShows(activeGenre);
+
+      // --- Implementasi DOM, Event, Function, dan Form Handling ---
+
+      // DOM = Mengakses HTML
+      const searchForm = document.getElementById("searchForm");
+      const searchInput = document.getElementById("searchInput");
+
+      // Function = Menjalankan perintah
+      function handleShowSearch(event) {
+        // Event = Menangkap aksi user (submit form)
+        event.preventDefault();
+
+        // Form handling = Mengatur input user
+        const keyword = searchInput.value.trim();
+
+        if (keyword === "") {
+          alert("Form kosong! Masukkan judul TV Show untuk mencari.");
+        } else {
+          alert(`Fitur pencarian sedang memproses kata kunci: "${keyword}"`);
+          searchInput.value = ""; // Mengosongkan form setelah submit
+        }
+      }
+
+      // Event Listener
+      if (searchForm) {
+        searchForm.addEventListener("submit", handleShowSearch);
+      }
+    </script>
+  </body>
+</html>
